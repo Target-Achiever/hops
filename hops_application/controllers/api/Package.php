@@ -62,6 +62,12 @@ class Package extends REST_Controller {
 			$user_id = $arg['user_id'];
 			$data['user_id'] = $user_id;
 
+			// if($arg['user_category'] != 1) {
+			// 	$response = array('status' => FALSE,'status_code'=>HTTP_CONFLICT,'message' => 'Something went wrong. Please try again later');
+			// 	$this->response($response);
+			// }
+
+
 			// check eligible condition - check whether the mobile number is updated or not, check whether the user has valid card details or not, check whether the user has any pending payment
 
 			$user_eligibility = $this->package_model->check_user_cards($user_id);
@@ -307,7 +313,7 @@ class Package extends REST_Controller {
 
 							$msg = array (
 									'title' => "You have a new notification.",
-									'message' => '$name wants to deliver the package',
+									'message' => $message,
 									'notification_type' => 2,
 									'notification_id' => $save_notifications['insert_id'],
 									'navigate_id' => $create_schedule['insert_id'] // order id
@@ -333,10 +339,6 @@ class Package extends REST_Controller {
 
 		$this->response($response);
 	}
-
-
-
-
 
 	// Order submit - schedule
 	// public function order_submit_details_post($arg=array())

@@ -113,6 +113,44 @@ class Profile_model extends CI_Model {
 		return $model_data;
 	}
 
+	/* =============         Update otp   ======== */
+	public function update_otp($user_id,$data)
+	{
+		
+		$model_data = $this->db->get_where('hs_user_actions',array('user_id'=>$user_id))->num_rows();
+
+		if($model_data != 0) {
+			$model_data = $this->db->where('user_id',$user_id)->update('hs_user_actions',$data);		
+		}
+		else {
+			$data['user_id'] = $user_id;
+			$model_data = $this->db->insert('hs_user_actions',$data);
+		}
+		
+		return TRUE;
+	}
+
+	/* =============         Check otp   ======== */
+	public function check_otp($user_id,$user_otp)
+	{
+		
+		$model_data = $this->db->select('user_otp_sent_date')->get_where('hs_user_actions',array('user_id'=>$user_id,'user_otp'=>$user_otp))->row_array();
+		
+		return $model_data;
+	}
+
+	/* =============         Update user mobile number   ======== */
+	public function update_user_mobile($user_id,$current_mobile)
+	{
+		
+		$model_data = $this->db->set('user_mobile','user_mobile_secondary',FALSE)->set('user_mobile_secondary',$current_mobile)->where('user_id',$user_id)->update('hs_users');
+
+		return $model_data;
+	}	
+
+
+	
+
 
 }
 // End of profile model - api

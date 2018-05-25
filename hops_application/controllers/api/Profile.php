@@ -80,7 +80,7 @@ class Profile extends REST_Controller {
 
 			// Update data for user basic details
 			$update_data['user_details']['user_fullname'] = $data['user_fullname'];
-
+			
 			// Update data for address
 			$update_data['user_address']['user_address1'] = $data['user_address1'];
 			$update_data['user_address']['user_address2'] = $data['user_address2'];
@@ -94,12 +94,38 @@ class Profile extends REST_Controller {
 				$update_data['user_account']['account_iban'] = $data['account_iban'];
 				$update_data['user_account']['account_swift'] = $data['account_swift'];
 				$update_data['user_account']['account_details'] = $data['account_details'];
-			}				
-			
-			// Update profile
-			$update_profile = $this->profile_model->update_profile($user_id,$update_data);
+			}
 
-			$response = array('status' => TRUE,'status_code'=>HTTP_SUCCESS,'server_data'=>array('user_profile_image'=>$file_path),'message' => $this->lang->line('text_profile_update'));
+			if(!empty($data['mobile_status']) && $data['mobile_status'] == 1) {
+
+				$update_otp['user_otp'] = mt_rand(111111,999999);
+				$update_otp['user_otp_sent_date'] = date('Y-m-d H:i:s');
+				$text = "To+confirm+your+mobile+number+using+OTP+".$update_otp['user_otp'];
+				$tomobile = $data['user_mobile'];
+				$update_data['user_details']['user_mobile_secondary'] = $data['user_mobile'];
+
+				$verification = $this->common->send_sms($tomobile,$text);
+
+				// Update profile
+				$update_profile = $this->profile_model->update_profile($user_id,$update_data);
+
+				// verification
+				if($verification) {
+						
+					$otp_update = $this->profile_model->update_otp($user_id,$update_otp);
+					$response = array('status' => TRUE,'status_code'=>HTTP_OK,'message'=>$this->lang->line('text_resend_otp'), 'server_data'=>array('otp'=>$update_otp['user_otp']));
+				}
+				else {
+					$response = array('status'=>FALSE,'status_code'=>HTTP_SERVER,'message'=> $this->lang->line('text_sms_error'));
+				}
+			}
+			else {
+				
+				// Update profile
+				$update_profile = $this->profile_model->update_profile($user_id,$update_data);
+
+				$response = array('status' => TRUE,'status_code'=>HTTP_SUCCESS,'server_data'=>array('user_profile_image'=>$file_path),'message' => $this->lang->line('text_profile_update'));
+			}
 		}
 		else {
 			$response = array('status' => FALSE,'status_code'=>HTTP_BAD_REQUEST,'message'=>$this->lang->line('text_empty_error'));
@@ -224,6 +250,85 @@ class Profile extends REST_Controller {
 			}
 			else {
 				$response = array('status' => FALSE,'status_code'=>HTTP_SERVER,'message' => $this->lang->line('text_query_error'));
+			}
+		}
+		else {
+			$response = array('status' => FALSE,'status_code'=>HTTP_BAD_REQUEST,'message'=>$this->lang->line('text_empty_error'));
+		}
+
+		$this->response($response);
+	}
+
+	// Otp verification
+	public function profile_otp_verification_get($arg=array())
+	{
+		
+		$data = $this->input->get();
+
+		if(!empty($data)) {
+
+			$user_id = $arg['user_id'];
+			$current_mobile_number = $arg['user_mobile'];
+			$otp = $data['otp'];
+
+			$check_otp = $this->profile_model->check_otp($user_id,$otp);
+
+			if(!empty($check_otp)) {
+
+				// OTP validation for maximum one minute
+				$current_timeF = date('Y-m-d H:i:s');
+				$cTime  = strtotime($current_timeF);
+				$otpTime = strtotime($check_otp['user_otp_sent_date']);
+				$differenceInSeconds = $cTime - $otpTime;
+				
+				// Check the total minutes exceeds two minutes
+				if($differenceInSeconds > 120) 
+				{
+					$response = array('status' => FALSE,'status_code'=>HTTP_CONFLICT,'message'=>$this->lang->line('text_otp_expired'));
+					$this->response($response);
+				}
+
+				$update_mobile = $this->profile_model->update_user_mobile($user_id,$current_mobile_number);
+
+				$response = array('status' => TRUE,'status_code'=>HTTP_SUCCESS,'message'=>$this->lang->line('text_otp_success'));
+			}
+			else {
+				$response = array('status' => FALSE,'status_code'=>HTTP_CONFLICT,'message'=>$this->lang->line('text_invalid_otp'));
+			}
+		}
+		else {
+			$response = array('status' => FALSE,'status_code'=>HTTP_BAD_REQUEST,'message'=>$this->lang->line('text_empty_error'));
+		}
+
+		$this->response($response);
+	}
+
+	// Resend otp
+	public function profile_resend_otp_get($arg=array())
+	{
+		
+		$data = $arg;
+
+		if(!empty($data)) {
+
+			$user_id = $arg['user_id'];
+			$secondary_mobile = $arg['user_mobile_secondary'];
+
+			$update_otp['user_otp'] = mt_rand(111111,999999);
+			$update_otp['user_otp_sent_date'] = date('Y-m-d H:i:s');
+			$text = "To+confirm+your+number+using+OTP+".$update_otp['user_otp'];
+			$tomobile = $secondary_mobile;
+
+			$verification = $this->common->send_sms($tomobile,$text);
+
+			// verification
+			if($verification) {
+						
+				$otp_update = $this->profile_model->update_otp($user_id,$update_otp);
+				$response = array('status' => TRUE,'status_code'=>HTTP_SUCCESS,'message'=>$this->lang->line('text_resend_otp'), 'server_data'=>array('otp'=>$update_otp['user_otp']));
+			}
+			else {
+				$response = array('status'=>FALSE,'status_code'=>HTTP_SERVER,'message'=> $this->lang->line('text_sms_error'));
 			}
 		}
 		else {

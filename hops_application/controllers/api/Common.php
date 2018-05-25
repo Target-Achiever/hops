@@ -1,7 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-
 class Common {
 	
 	public function send_mail($to_email,$sub,$msg)
@@ -170,7 +169,7 @@ class Common {
 			}
 			else {
 
-				$pemFile = (FCPATH . 'assets/pem/hops_dev.pem'); // For Development	
+				$pemFile = (FCPATH . 'assets/pem/hops_dev.pem'); // For Development
 				$apns_url = "ssl://gateway.sandbox.push.apple.com:2195"; // For Development
 			}
 
@@ -180,8 +179,9 @@ class Common {
 			stream_context_set_option($ctx, 'ssl', 'local_cert', $pemFile);
 			stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 
-			// Server
-			$fp = stream_socket_client($apns_url, $err,$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+			// Open a connection to the APNS server
+			$fp = stream_socket_client($apns_url, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+
 
 			// if (!$fp)
 				// exit("Failed to connect: $err $errstr" . PHP_EOL);
@@ -194,11 +194,13 @@ class Common {
 							);
 			$payload = json_encode($body);
 
+			$deviceToken = $device_details['logs_device_token'];
+
 			if(strlen($device_details['logs_device_token']) >= 40) {
 
 				// Build the binary notification
-				$msg = chr(0) . pack('n', 32) . pack('H*', str_replace(' ', '', $device_details['logs_device_token'])) . pack('n', strlen($payload)) . $payload;	
-				// $result = fwrite($fp, $msg, strlen($msg));
+				$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+				$result = fwrite($fp, $msg, strlen($msg));
 			}
 						
 			// $this->checkAppleErrorResponse($fp);
@@ -311,7 +313,7 @@ class Common {
 			}
 			else {
 
-				$pemFile = (FCPATH . 'assets/pem/hops_dev.pem'); // For Development	
+				$pemFile = (FCPATH . 'assets/pem/hops_dev.pem'); // For Development
 				$apns_url = "ssl://gateway.sandbox.push.apple.com:2195"; // For Development
 			}
 
@@ -321,8 +323,8 @@ class Common {
 			stream_context_set_option($ctx, 'ssl', 'local_cert', $pemFile);
 			stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 
-			// Server
-			$fp = stream_socket_client($apns_url, $err,$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+			// Open a connection to the APNS server
+			$fp = stream_socket_client($apns_url, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 
 			// if (!$fp)
 				// exit("Failed to connect: $err $errstr" . PHP_EOL);
@@ -333,6 +335,7 @@ class Common {
 				if(!empty($user_val['notification_id'])) {
 					$message['notification_id'] = $user_val['notification_id'];
 				}
+				$deviceToken = $user_val['logs_device_token'];
 
 				$body['aps'] = array(
 								'alert' => $alert,
@@ -343,11 +346,11 @@ class Common {
 
 				$payload = json_encode($body);
 				
-				if(strlen($user_val['logs_device_token']) >= 40) {
+				if(strlen($deviceToken) >= 40) {
 
 					// Build the binary notification
-					$msg = chr(0) . pack('n', 32) . pack('H*', str_replace(' ', '', $user_val['logs_device_token'])) . pack('n', strlen($payload)) . $payload;	
-					// $result = fwrite($fp, $msg, strlen($msg));
+					$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+					$result = fwrite($fp, $msg, strlen($msg));
 					// $result_msg[] = $result;
 				}
 			}

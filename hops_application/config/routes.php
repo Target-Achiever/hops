@@ -74,6 +74,8 @@ $route['location_update'] = 'api/profile/location_update'; // post method
 $route['add_card'] = 'api/profile/card_details_save'; // post method
 $route['saved_cards'] = 'api/profile/saved_cards_list'; // get method
 $route['delete_card'] = 'api/profile/card_details_delete'; // get method
+$route['profile_otp_verify'] = 'api/profile/profile_otp_verification'; // get method
+$route['profile_resend_otp'] = 'api/profile/profile_resend_otp'; // get method
 
 // Document verification controller
 $route['doc_status'] = 'api/document_verification/index'; // get method
@@ -96,10 +98,6 @@ $route['notification_view'] = 'api/notification/notification_view'; // get metho
 
 
 
-
-
-
-
 $route['test_orders'] = 'api/package/order_submit_details'; // post method
 
 
@@ -107,6 +105,15 @@ $route['test_orders'] = 'api/package/order_submit_details'; // post method
 
 
 /*  ===============--------------     WEBSITE START   -----------------======================== */
+
+
+$route['contact_us_test'] = 'ajax/contact_us_test'; // post method
+
+// Ajax routes
+$route['contact_us'] = 'ajax/contact_us'; // post method
+$route['get_package_cost'] = 'ajax/get_package_cost'; // get method
+
+
 
 
 

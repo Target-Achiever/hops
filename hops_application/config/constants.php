@@ -113,8 +113,7 @@ define("SMS_TITLE","HOPS-Verification");
 /* ============         Push notification configuration       ================ */
 // Android
 define("ANDROID_NOTIFICATION_API_URL","https://fcm.googleapis.com/fcm/send"); // android push notification api url
-define("ANDROID_NOTIFICATION_API_KEY","AAAAWEYmTLA:APA91bFxKJJG0kRizHK6OAVfU9qTpgwZ4-JJFtKn9jCZTNEpTTuyBKY53OCvsbhZt7GikQJlg3HaRl3nanu5bjeTh5Ft38SyfuXlYvH1V3HOF_EY7GaO2L-fwCC4oVmmme7Mw05ow6ET
-"); // android push notification api key
+define("ANDROID_NOTIFICATION_API_KEY","AAAAWEYmTLA:APA91bFxKJJG0kRizHK6OAVfU9qTpgwZ4-JJFtKn9jCZTNEpTTuyBKY53OCvsbhZt7GikQJlg3HaRl3nanu5bjeTh5Ft38SyfuXlYvH1V3HOF_EY7GaO2L-fwCC4oVmmme7Mw05ow6ET"); // android push notification api key
 
 // Ios
 define("HOPS_ENVIRONMENT","DEVELOPMENT"); // development environment

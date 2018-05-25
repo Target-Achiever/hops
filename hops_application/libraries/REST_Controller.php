@@ -112,7 +112,7 @@ abstract class REST_Controller extends CI_Controller {
 
             // $user_row = $this->db->select('user_id')->where(array($this->config->item('auth_key_column')=>$auth_key,'logs_login_status'=>1))->get($this->config->item('auth_keys_table'))->row_array();
 
-            $user_row = $this->db->select('u.user_id,u.user_fullname,u.user_email,u.user_mobile,u.user_profile_image,u.user_category')->from('hs_user_device_logs d')->join('hs_users u','u.user_id=d.user_id AND u.user_status=1','inner')->where(array('unique_id'=>$auth_key,'logs_login_status'=>1))->get()->row_array();
+            $user_row = $this->db->select('u.user_id,u.user_fullname,u.user_email,u.user_mobile,u.user_mobile_secondary,u.user_profile_image,u.user_category')->from('hs_user_device_logs d')->join('hs_users u','u.user_id=d.user_id AND u.user_status=1','inner')->where(array('unique_id'=>$auth_key,'logs_login_status'=>1))->get()->row_array();
             
             if(empty($user_row)) {
                 $this->is_valid_request = false;

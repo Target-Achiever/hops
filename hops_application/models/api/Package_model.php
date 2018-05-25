@@ -264,8 +264,13 @@ class Package_model extends CI_Model {
   	public function get_users_device_details($user_id)
   	{
 
-  		$model_data = $this->db->select('logs_device_type,logs_device_token')->get_where('hs_user_device_logs',array('user_id'=>$user_id,'logs_login_status'=>1))->row_array();
+  		$where_cond = '(d.user_id="'.$user_id.'" AND d.logs_login_status=1)';
 
+  		$this->db->select('d.logs_device_type,d.logs_device_token');
+  		$this->db->from('hs_user_device_logs d');
+  		$this->db->join('hs_user_settings s','s.user_id=d.user_id AND s.push_alert=1','inner');
+  		$model_data = $this->db->where($where_cond)->get()->row_array();
+  		
 		return $model_data;
 	}
 

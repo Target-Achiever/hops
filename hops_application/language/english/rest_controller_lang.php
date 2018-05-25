@@ -45,7 +45,7 @@ $lang['text_delete_success'] = "Removed successfully";
 $lang['text_cost_success'] = "Cost calculated successfully";
 $lang['text_cost_failure'] = "Error occured in amount calculation";
 
-$lang['text_mobile_not_update'] = "Mobile number is must needed for shipment";
+$lang['text_mobile_no    t_update'] = "Mobile number is must needed for shipment";
 $lang['text_card_not_update'] = "Card details is must needed for shipment";
 $lang['text_order_request'] = "Order request sent successfully";
 $lang['text_pending_payment'] = "Please complete the payment for previous order(s)";
@@ -54,15 +54,3 @@ $lang['text_order_accpet_success'] = "Order accepted successfully";
 $lang['text_something_wrong'] = "Something went wrong. Please try again later";
 $lang['text_schedule_error'] = "You already have the another schedule on this time";
 
-
-
-// $lang['text_rest_ip_denied'] = 'IP denied';
-// $lang['text_rest_ip_unauthorized'] = 'IP unauthorized';
-// $lang['text_rest_unauthorized'] = 'Unauthorized';
-// $lang['text_rest_ajax_only'] = 'Only AJAX requests are allowed';
-// $lang['text_rest_api_key_unauthorized'] = 'This API key does not have access to the requested controller';
-// $lang['text_rest_api_key_permissions'] = 'This API key does not have enough permissions';
-// $lang['text_rest_api_key_time_limit'] = 'This API key has reached the time limit for this method';
-// $lang['text_rest_ip_address_time_limit'] = 'This IP Address has reached the time limit for this method';
-// $lang['text_rest_unknown_method'] = 'Unknown method';
-// $lang['text_rest_unsupported'] = 'Unsupported protocol';
